@@ -18,10 +18,30 @@ st.markdown("""
 st.markdown('<div class="main-title">The Retirement Race 🏁</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">EPF vs. The Stock Market – Where Should Your Ringgit Grow?</div>', unsafe_allow_html=True)
 
-# --- ASSUMED RATES ---
-EPF_RATE_ANNUAL = 0.055  # 5.5%
-STOCK_RATE_ANNUAL = 0.09 # 9.0%
-INFLATION_RATE = 0.03    # 3.0%
+# --- INTERACTIVE SIDEBAR (USER INPUT) ---
+st.sidebar.header("💰 Your Investment Plan")
+st.sidebar.write("Imagine you have extra money every month. How will you split it?")
+
+total_investment = st.sidebar.number_input("Total Monthly Surplus (RM)", min_value=100, max_value=5000, value=500, step=50)
+investment_years = st.sidebar.slider("Investment Duration (Years)", min_value=5, max_value=50, value=30, step=1)
+months = investment_years * 12
+
+st.sidebar.subheader("Asset Allocation")
+epf_percentage = st.sidebar.slider("Allocation to EPF (%)", min_value=0, max_value=100, value=50, step=10)
+stock_percentage = 100 - epf_percentage
+
+st.sidebar.write(f"**EPF Monthly:** RM {(epf_percentage/100)*total_investment:.2f}")
+st.sidebar.write(f"**Stocks Monthly:** RM {(stock_percentage/100)*total_investment:.2f}")
+
+# --- LET USERS CHANGE THE RATES ---
+st.sidebar.divider()
+st.sidebar.subheader("📊 Advanced: Change the Rates")
+st.sidebar.write("Test different economic scenarios:")
+
+# Converting to decimals in the background, but showing percentages to the user
+EPF_RATE_ANNUAL = st.sidebar.slider("EPF Expected Dividend (%)", min_value=3.0, max_value=8.0, value=5.5, step=0.1) / 100
+STOCK_RATE_ANNUAL = st.sidebar.slider("Stock Market Expected Return (%)", min_value=4.0, max_value=15.0, value=9.0, step=0.5) / 100
+INFLATION_RATE = st.sidebar.slider("Expected Inflation Rate (%)", min_value=1.0, max_value=8.0, value=3.0, step=0.5) / 100
 
 # --- INTERACTIVE SIDEBAR (USER INPUT) ---
 st.sidebar.header("💰 Your Investment Plan")
