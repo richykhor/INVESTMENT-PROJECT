@@ -42,4 +42,5 @@ st.sidebar.write(f"**Stocks Monthly:** RM {stock_monthly_pmt:.2f}")
 
 # --- ADVANCED: LET USERS CHANGE THE RATES ---
 st.sidebar.divider()
-st.sidebar.subheader("📊 Advanced: Change
+st.sidebar.subheader("📊 Advanced: Change the Rates")
+st.sidebar.write("Test different economic scenarios:")
