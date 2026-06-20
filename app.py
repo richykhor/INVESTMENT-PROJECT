@@ -111,7 +111,7 @@ with st.expander("🧮 Click here to see the Step-by-Step Mathematical Formulas"
     st.write("### 1. Future Value of an Annuity (FVA)")
     st.write("We use this formula to calculate the future value of a series of equal monthly payments, compounding monthly.")
     st.latex(r"FV = P \times \frac{(1 + r)^n - 1}{r}")
-    st.write("**Where based on your current inputs:**")
+    st.write("**Where:**")
     st.markdown(f"""
     * **$FV$** = Future Value (Final Amount)
     * **$P$** = Monthly Payment
