@@ -11,7 +11,6 @@ st.markdown("""
     <style>
     .main-title { font-size: 40px; font-weight: bold; color: #2E4053; text-align: center; }
     .sub-title { font-size: 20px; color: #5D6D7E; text-align: center; margin-bottom: 30px; }
-    .stress-test-box { border: 2px solid #E74C3C; padding: 20px; border-radius: 10px; background-color: #FDEDEC; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -89,8 +88,8 @@ with col3:
 st.divider()
 
 # --- INTERACTIVE GRAPH ---
-st.subheader(f"📈 The Illusion of the 'Perfect' Average")
-st.write("The graph below assumes the stock market goes up a perfect, smooth 9% every single year. But in reality, the stock market is highly volatile.")
+st.subheader(f"📈 30-Year Wealth Projection")
+st.write("This projection uses assumed average compound growth rates to forecast long-term wealth accumulation.")
 
 df = pd.DataFrame({
     'Month': np.arange(months + 1),
@@ -106,56 +105,8 @@ fig.update_layout(hovermode="x unified", legend_title_text='Strategy')
 st.plotly_chart(fig, use_container_width=True)
 
 # ==========================================
-# --- NEW: STRESS TEST MODULE ---
-# ==========================================
-st.markdown('<div class="stress-test-box">', unsafe_allow_html=True)
-st.subheader("💥 Stress Test: The 'Retirement Nightmare' Scenario")
-st.write("What if a global financial crisis hits right when you are about to retire? Let's simulate a sudden stock market crash to see **Sequence of Returns Risk** in action. Notice how EPF acts as an anchor to save your portfolio.")
-
-crash_percent = st.slider("Simulate a sudden Stock Market Crash (%)", min_value=0, max_value=60, value=30, step=5) / 100
-
-# Recalculate values after crash
-epf_crash_value = epf_100_path[-1] # EPF is guaranteed, it does not crash
-stock_crash_value = stock_100_path[-1] * (1 - crash_percent)
-hybrid_crash_value = epf_hybrid[-1] + (stock_hybrid[-1] * (1 - crash_percent)) # Only the stock portion crashes
-
-col_c1, col_c2, col_c3 = st.columns(3)
-
-with col_c1:
-    st.metric(label="100% EPF After Crash", value=f"RM {epf_crash_value:,.2f}", delta="RM 0.00 (Protected)", delta_color="off")
-with col_c2:
-    loss_hybrid = hybrid_path[-1] - hybrid_crash_value
-    st.metric(label="Your Hybrid After Crash", value=f"RM {hybrid_crash_value:,.2f}", delta=f"- RM {loss_hybrid:,.2f} lost", delta_color="inverse")
-with col_c3:
-    loss_stock = stock_100_path[-1] - stock_crash_value
-    st.metric(label="100% Stocks After Crash", value=f"RM {stock_crash_value:,.2f}", delta=f"- RM {loss_stock:,.2f} lost", delta_color="inverse")
-
-st.markdown('</div><br>', unsafe_allow_html=True)
-
-
-# ==========================================
-# --- RISK & INFLATION ANALYSIS ---
-# ==========================================
-st.divider()
-col_a, col_b = st.columns(2)
-
-with col_a:
-    st.write("### The Danger of 100% Stocks")
-    st.write("As the Stress Test above proves, mathematically, maximum returns equal maximum risk. If you put 100% in stocks, you might lose decades of hard-earned money overnight. A **Hybrid Strategy** ensures that even during a market crash, your EPF portion guarantees you won't go broke.")
-    st.progress(int(volatility_score * 10))
-    st.write(f"**Your Volatility Exposure: {volatility_score:.1f} / 10**")
-
-with col_b:
-    st.write("### The Silent Thief: Inflation")
-    st.write("If stocks are dangerous, why not put 100% in EPF? Because of **Inflation**. EPF protects your *numbers*, but inflation destroys your *purchasing power*.")
-    st.write(f"In nominal terms, your hybrid strategy yields **RM {hybrid_path[-1]:,.2f}**.")
-    st.write(f"But adjusted for a {INFLATION_RATE*100:.1f}% annual inflation rate over {investment_years} years:")
-    st.markdown(f"**Real Purchasing Power in today's money:** <h3 style='color: red;'>RM {real_value_hybrid:,.2f}</h3>", unsafe_allow_html=True)
-
-# ==========================================
 # --- MATHEMATICAL EXPLANATION SECTION ---
 # ==========================================
-st.divider()
 with st.expander("🧮 Click here to see the Step-by-Step Mathematical Formulas"):
     st.write("### 1. Future Value of an Annuity (FVA)")
     st.write("We use this formula to calculate the future value of a series of equal monthly payments, compounding monthly.")
@@ -183,4 +134,51 @@ with st.expander("🧮 Click here to see the Step-by-Step Mathematical Formulas"
     st.latex(r"Real\ Value = \frac{Nominal\ Value}{(1 + i)^t}")
     st.latex(rf"Real\ Value = \frac{{{hybrid_path[-1]:,.2f}}}{{(1 + {INFLATION_RATE})^{{{investment_years}}}}} = RM \ {real_value_hybrid:,.2f}")
 
+
+# ==========================================
+# --- STRESS TEST MODULE (REWRITTEN) ---
+# ==========================================
+st.divider()
+st.subheader("⚠️ Stress Test: Evaluating Sequence of Returns Risk")
+
+st.info("In real-world investing, average returns do not protect you from market timing. **'Sequence of Returns Risk'** occurs when a major market downturn happens just as you need to withdraw your funds (e.g., at retirement). Use the slider below to simulate a sudden market crash and observe how the guaranteed nature of EPF acts as a financial anchor, protecting your capital when stocks fall.")
+
+crash_percent = st.slider("Simulate a sudden Stock Market Crash (%)", min_value=0, max_value=60, value=30, step=5) / 100
+
+# Recalculate values after crash
+epf_crash_value = epf_100_path[-1] # EPF is guaranteed, it does not crash
+stock_crash_value = stock_100_path[-1] * (1 - crash_percent)
+hybrid_crash_value = epf_hybrid[-1] + (stock_hybrid[-1] * (1 - crash_percent)) # Only the stock portion crashes
+
+col_c1, col_c2, col_c3 = st.columns(3)
+
+with col_c1:
+    st.metric(label="100% EPF After Crash", value=f"RM {epf_crash_value:,.2f}", delta="RM 0.00 (Protected)", delta_color="off")
+with col_c2:
+    loss_hybrid = hybrid_path[-1] - hybrid_crash_value
+    st.metric(label="Your Hybrid After Crash", value=f"RM {hybrid_crash_value:,.2f}", delta=f"- RM {loss_hybrid:,.2f} lost", delta_color="inverse")
+with col_c3:
+    loss_stock = stock_100_path[-1] - stock_crash_value
+    st.metric(label="100% Stocks After Crash", value=f"RM {stock_crash_value:,.2f}", delta=f"- RM {loss_stock:,.2f} lost", delta_color="inverse")
+
+# ==========================================
+# --- RISK & INFLATION ANALYSIS ---
+# ==========================================
+st.divider()
+col_a, col_b = st.columns(2)
+
+with col_a:
+    st.write("### The Danger of 100% Stocks")
+    st.write("As the Stress Test above proves, mathematically, maximum returns equal maximum risk. If you put 100% in stocks, you expose decades of compound interest to sudden market corrections. A **Hybrid Strategy** ensures that even during a crash, your EPF portion guarantees a solid financial floor.")
+    st.progress(int(volatility_score * 10))
+    st.write(f"**Your Volatility Exposure: {volatility_score:.1f} / 10**")
+
+with col_b:
+    st.write("### The Silent Thief: Inflation")
+    st.write("If stocks are dangerous, why not put 100% in EPF? Because of **Inflation**. EPF protects your *nominal numbers*, but inflation constantly erodes your *purchasing power*.")
+    st.write(f"In nominal terms, your hybrid strategy yields **RM {hybrid_path[-1]:,.2f}**.")
+    st.write(f"But adjusted for a {INFLATION_RATE*100:.1f}% annual inflation rate over {investment_years} years:")
+    st.markdown(f"**Real Purchasing Power in today's money:** <h3 style='color: red;'>RM {real_value_hybrid:,.2f}</h3>", unsafe_allow_html=True)
+
+st.divider()
 st.caption("Group Project by: Ho Jun Chi, Lee Jing Wei, Ku Yong Jie, Tan Qian Yin, Nurul Iman Hannani Binti Ridzuan (MTM3023 K1)")
