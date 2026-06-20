@@ -88,7 +88,7 @@ with col3:
 st.divider()
 
 # --- INTERACTIVE GRAPH ---
-st.subheader(f"📈 30-Year Wealth Projection")
+st.subheader(f"📈 {investment_years}-Year Wealth Projection")
 st.write("This projection uses assumed average compound growth rates to forecast long-term wealth accumulation.")
 
 df = pd.DataFrame({
@@ -132,11 +132,21 @@ with st.expander("🧮 Click here to see the Step-by-Step Mathematical Formulas"
 
     st.write("### 2. Real vs. Nominal Value (Inflation Adjustment)")
     st.latex(r"Real\ Value = \frac{Nominal\ Value}{(1 + i)^t}")
+    
+    # --- THIS IS THE NEWLY ADDED EXPLANATION PART ---
+    st.write("**Where:**")
+    st.markdown(f"""
+    * **$Nominal\ Value$** = Final calculated wealth (RM {hybrid_path[-1]:,.2f})
+    * **$i$** = Annual Inflation Rate ({INFLATION_RATE*100:.1f}%)
+    * **$t$** = Total number of years ({investment_years} years)
+    """)
+    # ------------------------------------------------
+
     st.latex(rf"Real\ Value = \frac{{{hybrid_path[-1]:,.2f}}}{{(1 + {INFLATION_RATE})^{{{investment_years}}}}} = RM \ {real_value_hybrid:,.2f}")
 
 
 # ==========================================
-# --- STRESS TEST MODULE (REWRITTEN) ---
+# --- STRESS TEST MODULE ---
 # ==========================================
 st.divider()
 st.subheader("⚠️ Stress Test: Evaluating Sequence of Returns Risk")
