@@ -44,3 +44,12 @@ st.sidebar.write(f"**Stocks Monthly:** RM {stock_monthly_pmt:.2f}")
 st.sidebar.divider()
 st.sidebar.subheader("📊 Advanced: Change the Rates")
 st.sidebar.write("Test different economic scenarios:")
+
+# Sliders convert to percentages in the background (e.g., 5.5 / 100 = 0.055)
+EPF_RATE_ANNUAL = st.sidebar.slider("EPF Expected Dividend (%)", min_value=3.0, max_value=8.0, value=5.5, step=0.1) / 100
+STOCK_RATE_ANNUAL = st.sidebar.slider("Stock Expected Return (%)", min_value=4.0, max_value=15.0, value=9.0, step=0.5) / 100
+INFLATION_RATE = st.sidebar.slider("Expected Inflation Rate (%)", min_value=1.0, max_value=8.0, value=3.0, step=0.5) / 100
+
+
+# ==========================================
+# --- MATHEMATICAL CALCULATION ENGINE ---
